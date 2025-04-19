@@ -1,98 +1,100 @@
-# DNS-Lab
+# 🌐 DNS Lab Project
 
-## Objective 
-
+## 🎯 Objective
 In this lab, I configured and tested DNS records within an Active Directory environment using Azure-hosted virtual machines. The exercises included creating and modifying A-records, working with local DNS caching, and configuring CNAME records to explore domain name resolution behaviors between a domain controller and a client machine.
 
-## Environments Used
+---
 
-- Microsoft Azure (for hosting VMs)
-- DC-1 – Windows Server 2022 (Domain Controller)
-- Client-1 – Windows 10 Pro (Domain-joined client)
-- Active Directory Domain Services (AD DS)
-- DNS Manager
-- PowerShell / Command Prompt
+## 🧰 Environments Used
 
-## A-Record Exercise 
+- **Microsoft Azure** (for hosting VMs)
+- **DC-1** – Windows Server 2022 (Domain Controller)
+- **Client-1** – Windows 10 Pro (Domain-joined client)
+- **Active Directory Domain Services (AD DS)**
+- **DNS Manager**
+- **PowerShell / Command Prompt**
 
-1. Using my DC-1 VM, I will log in using the domain admin account(my domain.com\jane_admin)
-2. In the Client-1 VM, I will log in as an admin(mydomian\jane_admin)
-3. Attempt to ping "mainframe"(it can be anything) in the Client-1 virtual environment. It will most likely fail. Whenever you ping a hostname, it follows this process: Check the Local DNS Cache (Fastest), the Local Host File(Faster), and then the DNS server. We can even take this further and input ipconfig /displaydns to examine the local DNS cache further, but the record for "mainframe" is absent. 
-4. From here, I will run the nslookup command for "mainframe," which will also fail. The nslookup command will query the DNS server for any domain names or IP addresses that match.
-5. Next, I will create an A-record for the hostname "mainframe. To do this, I will need access to the DC-1 VM, open Windows Administrative tools, navigate to DNS, and this will be the area to create records. I will make the mainframe A-record and point it to DC-1's private IP address.
-6. Back in the Client-1 virtual machine, I will ping mainframe and see if it works.
-   
+---
 
-### Initial Ping Test for 'mainframe' from Client-1 (Expected Failure)
-![image](https://github.com/user-attachments/assets/607f69bb-70ba-46a7-abfc-a05f715f36a3)
+## 📁 A-Record Exercise
 
-### Check Local DNS Cache on Client-1 (Record Not Found for 'mainframe') 
+1. Log in to **DC-1** as `mydomain.com\jane_admin`
+2. Log in to **Client-1** as `mydomain\jane_admin`
+3. Attempt to ping `mainframe` from Client-1. This will likely fail.
+4. Use `ipconfig /displaydns` to check local DNS cache — record should be absent.
+5. Use `nslookup mainframe` — it will also fail as no DNS record exists yet.
+6. On DC-1, create an A-record for `mainframe` pointing to DC-1’s private IP.
+7. On Client-1, ping `mainframe` again — this time it should succeed.
 
-![image](https://github.com/user-attachments/assets/8c85764c-727f-47d7-be03-95f5fc0d7e1e)
+### 🔎 Initial Ping Test for 'mainframe' from Client-1 (Expected Failure)
+<img src="https://github.com/user-attachments/assets/607f69bb-70ba-46a7-abfc-a05f715f36a3" width="600"/>
 
-### Check Local Host File for any records of mainframe
-A unique aspect of the host file is that you can map a hostname to a particular IP address. 
-![image](https://github.com/user-attachments/assets/4b3f7d34-327f-4bf5-8fa5-e872f9402f0d)
+### 🔍 Check Local DNS Cache on Client-1 (Record Not Found for 'mainframe')
+<img src="https://github.com/user-attachments/assets/8c85764c-727f-47d7-be03-95f5fc0d7e1e" width="600"/>
 
-### Attempt DNS Lookup for 'mainframe' Using nslookup (Expected Failure)
+### 🧾 Check Local Host File for any Records of 'mainframe'
+<img src="https://github.com/user-attachments/assets/4b3f7d34-327f-4bf5-8fa5-e872f9402f0d" width="600"/>
 
-![image](https://github.com/user-attachments/assets/e8f4a791-a7cc-43df-af79-878459101bd2)
+### ❌ Attempt DNS Lookup for 'mainframe' Using nslookup (Expected Failure)
+<img src="https://github.com/user-attachments/assets/e8f4a791-a7cc-43df-af79-878459101bd2" width="600"/>
 
-### Create A-Record for 'mainframe' on DC-1 and Point to Private IP
+### ✅ Create A-Record for 'mainframe' on DC-1 and Point to Private IP
+<img src="https://github.com/user-attachments/assets/b1de62ae-5874-4ccb-823c-2aeda70a260c" width="600"/>
 
-![image](https://github.com/user-attachments/assets/b1de62ae-5874-4ccb-823c-2aeda70a260c)
+### ✅ Verify A-Record Functionality by Pinging 'mainframe' from Client-1
+<img src="https://github.com/user-attachments/assets/aaa8086e-3a09-4a14-be32-24496d830167" width="600"/>
 
-### Verify A-Record Functionality by Pinging 'mainframe' from Client-1
+---
 
- ![image](https://github.com/user-attachments/assets/aaa8086e-3a09-4a14-be32-24496d830167)
+## 🧹 Local DNS Cache Exercise
 
-## Local DNS Cache Exercise 
+8. On DC-1, change the `mainframe` A-record to point to `8.8.8.8`
+9. On Client-1, ping `mainframe` again — observe it still pings the old address (due to DNS cache)
+10. Use `ipconfig /displaydns` to view the cached record
+11. Run `ipconfig /flushdns` to clear the DNS cache
+12. Re-run `ipconfig /displaydns` to confirm cache is cleared
+13. Ping `mainframe` again — it should now resolve to the updated IP
 
-7. Back in the DC-1 VM, change mainframe’s record address to 8.8.8.8
-8. Back in the Client-1 VM, ping “mainframe” again. Observe that it still pings the old address
-9. Observe the local dns cache (ipconfig /displaydns)
-10. Flush the DNS cache (ipconfig /flushdns).
-11. Observe that the cache is empty (ipconfig /displaydns)
-12. Attempt to ping “mainframe” again. Observe the address of the new record is showing up
+### 🛠️ Update 'mainframe' A-Record on DC-1 to Point to 8.8.8.8
+<img src="https://github.com/user-attachments/assets/6f9494aa-1fc5-4e73-aad4-635cb6ad5b37" width="600"/>
 
-### Update 'mainframe' A-Record on DC-1 to Point to 8.8.8.8
-![image](https://github.com/user-attachments/assets/6f9494aa-1fc5-4e73-aad4-635cb6ad5b37)
+### 📶 Ping 'mainframe' from Client-1 (Old IP Still Cached)
+<img src="https://github.com/user-attachments/assets/2e9f14a3-b2d4-420f-b467-560c4ec4b5f7" width="600"/>
 
-### Ping 'mainframe' from Client-1 (Old IP Still Cached)
+### 🔍 View Local DNS Cache Using ipconfig /displaydns
+<img src="https://github.com/user-attachments/assets/39498d6a-0e9b-4b90-8b8d-f5b5ee5aa9c8" width="600"/>
 
-![image](https://github.com/user-attachments/assets/2e9f14a3-b2d4-420f-b467-560c4ec4b5f7)
+### 🧼 Flush the DNS Cache in PowerShell
+<img src="https://github.com/user-attachments/assets/56505e7a-5bea-4c1a-a822-fa5310fc0709" width="600"/>
 
-### View Local DNS Cache Using ipconfig /displaydns
+### 🔁 Rebuild DNS Cache to Reflect Updated A-Record for 'mainframe'
+<img src="https://github.com/user-attachments/assets/a17fae27-c850-4111-929e-8a25a5cda0ea" width="600"/>
 
-![image](https://github.com/user-attachments/assets/39498d6a-0e9b-4b90-8b8d-f5b5ee5aa9c8)
+---
 
-### Flush the DNS cache (ipconfig /flushdns) in the Powershell interface as an admin
+## 🔗 CNAME Record Exercise
 
-![image](https://github.com/user-attachments/assets/56505e7a-5bea-4c1a-a822-fa5310fc0709)
+14. On DC-1, open DNS Manager and create a CNAME record that maps `search` to `www.google.com`
+15. On Client-1, ping `search` — DNS should resolve to Google's server
+16. On Client-1, run `nslookup search` to validate the CNAME record resolution
 
-### Flush and Rebuild DNS Cache to Reflect Updated A-Record for 'mainframe
+### 🏷️ Create CNAME Record 'search' Pointing to 'www.google.com' on DC-1
+<img src="https://github.com/user-attachments/assets/aa5bf680-1af7-4d19-b211-04f51e0b9ddb" width="600"/>
 
-![image](https://github.com/user-attachments/assets/a17fae27-c850-4111-929e-8a25a5cda0ea)
+### 🧪 Test CNAME Record Resolution by Pinging 'search' from Client-1
+<img src="https://github.com/user-attachments/assets/175966d2-c5d9-4c4d-b04f-ce64e7a754f3" width="600"/>
 
+### 🔍 Use nslookup on Client-1 to Confirm 'search' Resolves to www.google.com
+<img src="https://github.com/user-attachments/assets/da40d2a8-52d1-4204-8e86-43522dc3c3e9" width="600"/>
 
-## CNAME Record Exercise
+---
 
-13. Return to the DC-1 virtual machine and open DNS Manager from the Windows Administrative Tools. Create a new CNAME (Canonical Name) record that maps the alias "search" to "www.google.com".
-14. Switch over to the Client-1 VM and attempt to ping "search" from the command line. Observe how the DNS resolution behaves and note the response, which should redirect to Google's servers.
-15. On Client-1, run the nslookup command for "search" to further confirm that the CNAME record correctly resolves to www.google.com.
+## ✅ Summary
 
-
-### Create CNAME Record 'search' Pointing to 'www.google.com' on DC-1
-
-![image](https://github.com/user-attachments/assets/aa5bf680-1af7-4d19-b211-04f51e0b9ddb)
-
-### Test CNAME Record Resolution by Pinging 'search' from Client-1
-
-![image](https://github.com/user-attachments/assets/175966d2-c5d9-4c4d-b04f-ce64e7a754f3)
-
-### Use nslookup on Client-1 to Confirm 'search' CNAME Resolves to www.google.com
-
-![image](https://github.com/user-attachments/assets/da40d2a8-52d1-4204-8e86-43522dc3c3e9)
+This lab demonstrated the practical use of DNS within a domain environment:
+- Creating and modifying A-records and CNAME records
+- Observing DNS cache behavior
+- Validating configurations using ping, nslookup, and cache management commands
 
 
 
